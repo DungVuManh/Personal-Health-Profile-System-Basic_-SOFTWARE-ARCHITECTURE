@@ -1,30 +1,27 @@
-const sql = require('mssql');
+const { Pool } = require('pg');
 require('dotenv').config();
 
-const config = {
-    user: process.env.DB_USER || 'sa',
+const pool = new Pool({
+    user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || '123456',
-    server: process.env.DB_SERVER || 'localhost',
+    host: process.env.DB_SERVER || 'localhost',
     database: process.env.DB_DATABASE || 'swd',
-    options: {
-        encrypt: false, // Use true for azure
-        trustServerCertificate: true // Change to false for production
-    }
-};
+    port: process.env.DB_PORT || 5432,
+});
 
-const poolPromise = new sql.ConnectionPool(config)
-    .connect()
-    .then(pool => {
-        console.log('Connected to SQL Server');
-        return pool;
+pool.on('error', (err, client) => {
+    console.error('\n❌ Database Connection Failed! Bad Config: ', err.message);
+});
+
+pool.connect()
+    .then(client => {
+        console.log('Connected to PostgreSQL');
+        client.release();
     })
     .catch(err => {
-        console.error('\n❌ Database Connection Failed! Bad Config: ', err.message);
-        console.error('👉 GỢI Ý: Chạy lệnh "node test-db.js" trong thư mục backend để tự động chẩn đoán chi tiết lỗi kết nối SQL Server.\n');
-        return null; // Return null instead of throwing to prevent application crash
+        console.error('Error connecting to PostgreSQL:', err.message);
     });
 
 module.exports = {
-    sql,
-    poolPromise
+    pool
 };
