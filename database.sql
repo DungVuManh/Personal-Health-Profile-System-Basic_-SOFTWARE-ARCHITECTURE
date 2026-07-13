@@ -4,10 +4,10 @@
 -- ==========================================
 
 -- Create Database
-CREATE DATABASE AppointmentDB;
+CREATE DATABASE swd;
 GO
 
-USE AppointmentDB;
+USE swd;
 GO
 
 
@@ -179,4 +179,58 @@ CREATE TABLE Users (
         FOREIGN KEY (doctor_id)
         REFERENCES Doctor(doctor_id)
 );
+GO
+
+
+-- ==========================================
+-- Seed Data for Testing (UC14)
+-- ==========================================
+
+-- Insert Patients
+INSERT INTO Patient (patient_id, name, dob, phone, email, address)
+VALUES ('PAT-48920', N'Nguyễn Văn Hùng', '1992-05-18', '0987654321', 'hung.nguyen@email.com', N'123 Đường Cầu Giấy, Hà Nội');
+GO
+
+INSERT INTO Patient (patient_id, name, dob, phone, email, address)
+VALUES ('PAT-48921', N'Trần Thị Bích', '1985-11-03', '0912345678', 'bich.tran@email.com', N'45 Lê Lợi, Quận 1, TP.HCM');
+GO
+
+INSERT INTO Patient (patient_id, name, dob, phone, email, address)
+VALUES ('PAT-48922', N'Lê Minh Hoàng', '1978-07-22', '0908765432', 'hoang.le@email.com', N'78 Trần Hưng Đạo, Đà Nẵng');
+GO
+
+-- Insert Doctors
+INSERT INTO Doctor (doctor_id, name, specialty, experience_years, license_number)
+VALUES ('DOC-12345', N'Lê Văn Quân', N'Đa Khoa', 8, 9876543);
+GO
+
+-- Insert Appointments (today = 2026-07-13, all Pending/In Progress for the worklist demo)
+INSERT INTO Appointment (appointment_id, patient_id, doctor_id, appointment_date, start_time, status)
+VALUES ('APP-10023', 'PAT-48920', 'DOC-12345', '2026-07-13', '14:30:00', N'Pending');
+GO
+
+INSERT INTO Appointment (appointment_id, patient_id, doctor_id, appointment_date, start_time, status)
+VALUES ('APP-10024', 'PAT-48921', 'DOC-12345', '2026-07-13', '15:00:00', N'Pending');
+GO
+
+INSERT INTO Appointment (appointment_id, patient_id, doctor_id, appointment_date, start_time, status)
+VALUES ('APP-10025', 'PAT-48922', 'DOC-12345', '2026-07-13', '15:30:00', N'In Progress');
+GO
+
+-- Insert ICD10 Codes
+INSERT INTO ICD10 (icd_code, disease_name, description)
+VALUES 
+('J06', N'Nhiễm khuẩn đường hô hấp trên cấp tính nhiều nơi', N'Viêm mũi họng cấp, cảm lạnh thông thường'),
+('I10', N'Tăng huyết áp vô căn (nguyên phát)', N'Huyết áp cao không rõ nguyên nhân'),
+('E11', N'Đái tháo đường không phụ thuộc insulin', N'Tiểu đường type 2'),
+('A09', N'Tiêu chảy và viêm dạ dày ruột do nhiễm khuẩn', N'Nhiễm trùng tiêu hóa cấp tính');
+GO
+
+-- Insert Medicines
+INSERT INTO Medicine (medicine_id, name, active_ingredient, dosage_form, strength, manufacturer, description)
+VALUES 
+('MED-001', 'Paracetamol 500mg', 'Paracetamol', 'Tablet', '500 mg', 'DHG Pharma', N'Giảm đau, hạ sốt'),
+('MED-002', 'Amoxicillin 500mg', 'Amoxicillin', 'Capsule', '500 mg', 'Mekophar', N'Kháng sinh điều trị nhiễm khuẩn'),
+('MED-003', 'Ibuprofen 400mg', 'Ibuprofen', 'Tablet', '400 mg', 'Domesco', N'Kháng viêm giảm đau'),
+('MED-004', 'Omeprazole 20mg', 'Omeprazole', 'Capsule', '20 mg', 'Imexpharm', N'Giảm axit dạ dày');
 GO
