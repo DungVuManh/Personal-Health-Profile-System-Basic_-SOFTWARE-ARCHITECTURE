@@ -1,17 +1,19 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
+// import heroImg from './assets/hero.png'
 import ConsultationScreen from './pages/ConsultationScreen'
-import { 
-  Activity, 
-  Home, 
-  Stethoscope, 
-  BookOpen, 
-  HeartPulse, 
-  ShieldCheck 
+import BookingScreen from './pages/BookingScreen'
+import {
+  Activity,
+  Home,
+  Stethoscope,
+  BookOpen,
+  HeartPulse,
+  ShieldCheck,
+  Calendar
 } from 'lucide-react'
 
 function App() {
-  const [activeTab, setActiveTab] = useState('consultation') // Default to consultation for easy testing!
+  const [activeTab, setActiveTab] = useState('booking') // Default to booking for testing!
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans antialiased">
@@ -26,26 +28,34 @@ function App() {
               HealthProfile
             </span>
           </div>
-          
+
           <nav className="flex items-center gap-2">
-            <button 
+            <button
               onClick={() => setActiveTab('home')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                activeTab === 'home' 
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' 
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${activeTab === 'home'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800'
-              }`}
+                }`}
             >
               <Home className="w-4 h-4" />
               <span>Home</span>
             </button>
-            <button 
-              onClick={() => setActiveTab('consultation')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                activeTab === 'consultation' 
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' 
+            <button
+              onClick={() => setActiveTab('booking')}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${activeTab === 'booking'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800'
-              }`}
+                }`}
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Book Appointment(UC2)</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('consultation')}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${activeTab === 'consultation'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
             >
               <Stethoscope className="w-4 h-4" />
               <span>Clinical Consultation (UC14)</span>
@@ -58,6 +68,8 @@ function App() {
       <main className="flex-grow flex flex-col overflow-hidden">
         {activeTab === 'consultation' ? (
           <ConsultationScreen />
+        ) : activeTab === 'booking' ? (
+          <BookingScreen />
         ) : (
           <div className="max-w-4xl mx-auto px-4 py-16 flex-grow flex flex-col justify-center items-center text-center">
             {/* Hero Section with professional medical icons */}
@@ -79,22 +91,33 @@ function App() {
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
               Personal Health Profile System
             </h1>
-            
+
             <p className="text-lg text-slate-600 max-w-2xl mb-12 leading-relaxed">
               Welcome to the proactive health management and care system. Seamlessly connect electronic health records, assist clinical consultations, and optimize the e-prescription workflow.
             </p>
 
             {/* Navigation Card Suggestions */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
-              <div 
-                onClick={() => setActiveTab('consultation')}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-3xl">
+              <div
+                onClick={() => setActiveTab('booking')}
                 className="bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 p-6 rounded-2xl border border-blue-100 text-left cursor-pointer transition-all duration-300 hover:shadow-md group"
               >
                 <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-200">
+                  <Calendar className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-blue-900 mb-1">Book Appointment</h3>
+                <p className="text-sm text-blue-700">Find doctors, filter schedule options, choose service type, and confirm bookings instantly.</p>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('consultation')}
+                className="bg-slate-50 hover:bg-slate-100 p-6 rounded-2xl border border-slate-200 text-left cursor-pointer transition-all duration-300 hover:shadow-md group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-slate-700 text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-200">
                   <Stethoscope className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-blue-900 mb-1">Doctor's Panel (UC14)</h3>
-                <p className="text-sm text-blue-700">Enter medical records, search ICD-10 diagnostic codes, and generate e-prescriptions dynamically.</p>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Doctor's Panel (UC14)</h3>
+                <p className="text-sm text-slate-600">Enter medical records, search ICD-10 diagnostic codes, and generate e-prescriptions dynamically.</p>
               </div>
 
               <div className="bg-slate-50 hover:bg-slate-100 p-6 rounded-2xl border border-slate-200 text-left transition-all duration-300 hover:shadow-sm group">

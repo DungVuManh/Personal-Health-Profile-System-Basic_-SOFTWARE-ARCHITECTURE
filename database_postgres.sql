@@ -161,6 +161,21 @@ CREATE TABLE Users (
         REFERENCES Doctor(doctor_id)
 );
 
+-- =========================
+-- Table: DoctorSchedule
+-- =========================
+CREATE TABLE IF NOT EXISTS DoctorSchedule (
+    schedule_id SERIAL PRIMARY KEY,
+    doctor_id VARCHAR(50) NOT NULL,
+    work_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    is_available BOOLEAN DEFAULT TRUE,
+    CONSTRAINT FK_DoctorSchedule_Doctor
+        FOREIGN KEY (doctor_id)
+        REFERENCES Doctor(doctor_id)
+);
+
 -- ==========================================
 -- Seed Data for Testing (UC14)
 -- ==========================================
@@ -204,3 +219,22 @@ VALUES
 ('MED-002', 'Amoxicillin 500mg', 'Amoxicillin', 'Capsule', '500 mg', 'Mekophar', 'Kháng sinh điều trị nhiễm khuẩn'),
 ('MED-003', 'Ibuprofen 400mg', 'Ibuprofen', 'Tablet', '400 mg', 'Domesco', 'Kháng viêm giảm đau'),
 ('MED-004', 'Omeprazole 20mg', 'Omeprazole', 'Capsule', '20 mg', 'Imexpharm', 'Giảm axit dạ dày');
+
+-- ==========================================
+-- Seed Data for Doctor Schedules
+-- ==========================================
+INSERT INTO DoctorSchedule (doctor_id, work_date, start_time, end_time, is_available)
+VALUES
+('DOC-12345', '2026-07-13', '08:00:00', '09:00:00', TRUE),
+('DOC-12345', '2026-07-13', '09:00:00', '10:00:00', TRUE),
+('DOC-12345', '2026-07-13', '10:00:00', '11:00:00', TRUE),
+('DOC-12345', '2026-07-13', '14:00:00', '15:00:00', TRUE),
+('DOC-12345', '2026-07-13', '15:00:00', '16:00:00', TRUE),
+('DOC-12345', '2026-07-13', '16:00:00', '17:00:00', TRUE),
+
+('DOC-12345', '2026-07-14', '08:00:00', '09:00:00', TRUE),
+('DOC-12345', '2026-07-14', '09:00:00', '10:00:00', TRUE),
+('DOC-12345', '2026-07-14', '10:00:00', '11:00:00', TRUE),
+('DOC-12345', '2026-07-14', '14:00:00', '15:00:00', TRUE),
+('DOC-12345', '2026-07-14', '15:00:00', '16:00:00', TRUE),
+('DOC-12345', '2026-07-14', '16:00:00', '17:00:00', TRUE);
