@@ -32,8 +32,8 @@ class BookingController {
             // 2. Save the appointment (reserve)
             await newAppointment.save();
 
-            // 3. Update status to "Pending Appointment" using the Entity's state management operation
-            await newAppointment.updateStatus('Pending Appointment');
+            // 3. Update status to "Pending" using the Entity's state management operation
+            await newAppointment.updateStatus('Pending');
 
             // 4. Return successful message back to boundary UI
             return res.status(201).json({
@@ -59,7 +59,7 @@ class BookingController {
     static async searchDoctors(req, res) {
         try {
             const { q } = req.query;
-            let queryStr = 'SELECT doctor_id, name, specialty, experience_years, license_number FROM Doctor';
+            let queryStr = 'SELECT doctor_id, name, specialty, experience_years, license_number, working_time FROM Doctor';
             let params = [];
 
             if (q) {
@@ -75,7 +75,8 @@ class BookingController {
         }
     }
 
-    // Check available slots for a doctor on a specific date
+    // Get doctor's working session (Morning or Afternoon) based on working_time field
+    // Returns: { working_time, session, start_time, available }
     static async getAvailableSlots(req, res) {
         try {
             const { doctor_id, date } = req.query;
@@ -84,62 +85,33 @@ class BookingController {
                 return res.status(400).json({ message: 'doctor_id and date query parameters are required.' });
             }
 
-            // Query slots from DoctorSchedule table
-            const scheduleRes = await pool.query(
-                `SELECT start_time, end_time, is_available FROM DoctorSchedule
-                 WHERE doctor_id = $1 AND work_date = $2`,
-                [doctor_id, date]
+            // Get doctor's working_time: 1 = Morning, 2 = Afternoon
+            const doctorRes = await pool.query(
+                'SELECT working_time FROM Doctor WHERE doctor_id = $1',
+                [doctor_id]
             );
 
-            let slots = [];
-            if (scheduleRes.rows.length > 0) {
-                slots = scheduleRes.rows.map(row => ({
-                    time: row.start_time,
-                    is_available: row.is_available // is BOOLEAN in Postgres
-                }));
-            } else {
-                // Fallback to standard slots if no schedule exists in DB
-                // const standardSlots = [
-                //     '08:00:00',
-                //     '09:00:00',
-                //     '10:00:00',
-                //     '11:00:00',
-                //     '14:00:00',
-                //     '15:00:00',
-                //     '16:00:00'
-                // ];
-                slots = standardSlots.map(s => ({
-                    time: s,
-                    is_available: true
-                }));
+            if (doctorRes.rows.length === 0) {
+                return res.status(404).json({ message: 'Doctor not found.' });
             }
 
-            // Get existing appointments for the doctor on this date to filter out already booked slots
-            const result = await pool.query(
-                `SELECT start_time FROM Appointment
-                 WHERE doctor_id = $1 AND appointment_date = $2 AND status != 'Cancelled'`,
-                [doctor_id, date]
-            );
+            const workingTime = doctorRes.rows[0].working_time;
 
-            // Extract booked start times and normalize to compare (HH:MM)
-            const bookedTimes = result.rows.map(row => {
-                const timeStr = row.start_time;
-                return timeStr.split(':').slice(0, 2).join(':'); // e.g. "08:00"
+            // Determine session label and representative start_time
+            const sessionName = workingTime === 1 ? 'Morning' : 'Afternoon';
+            const startTime = workingTime === 1 ? '08:00:00' : '13:00:00';
+
+            // Check if doctor already has a booking in this session on the chosen date
+            // (multiple bookings per session allowed — set available: true always)
+            return res.json({
+                working_time: workingTime,
+                session: sessionName,
+                start_time: startTime,
+                available: true
             });
 
-            // Map slots to check availability
-            const availability = slots.map(slot => {
-                const slotHHMM = slot.time.split(':').slice(0, 2).join(':');
-                const isBooked = bookedTimes.includes(slotHHMM);
-                return {
-                    time: slot.time,
-                    available: slot.is_available && !isBooked
-                };
-            });
-
-            return res.json(availability);
         } catch (error) {
-            console.error('Error getting available slots:', error);
+            console.error('Error getting session info:', error);
             return res.status(500).json({ message: 'Internal server error', error: error.message });
         }
     }

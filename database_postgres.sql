@@ -28,7 +28,8 @@ CREATE TABLE Doctor (
     name VARCHAR(100) NOT NULL,
     specialty VARCHAR(100),
     experience_years INT,
-    license_number INT UNIQUE
+    license_number INT UNIQUE,
+    working_time INT CHECK (working_time IN (1, 2)) -- 1 = Morning, 2 = Afternoon
 );
 
 -- =========================
@@ -161,21 +162,6 @@ CREATE TABLE Users (
         REFERENCES Doctor(doctor_id)
 );
 
--- =========================
--- Table: DoctorSchedule
--- =========================
-CREATE TABLE IF NOT EXISTS DoctorSchedule (
-    schedule_id SERIAL PRIMARY KEY,
-    doctor_id VARCHAR(50) NOT NULL,
-    work_date DATE NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    is_available BOOLEAN DEFAULT TRUE,
-    CONSTRAINT FK_DoctorSchedule_Doctor
-        FOREIGN KEY (doctor_id)
-        REFERENCES Doctor(doctor_id)
-);
-
 -- ==========================================
 -- Seed Data for Testing (UC14)
 -- ==========================================
@@ -191,8 +177,9 @@ INSERT INTO Patient (patient_id, name, dob, phone, email, address)
 VALUES ('PAT-48922', 'Lê Minh Hoàng', '1978-07-22', '0908765432', 'hoang.le@email.com', '78 Trần Hưng Đạo, Đà Nẵng');
 
 -- Insert Doctors
-INSERT INTO Doctor (doctor_id, name, specialty, experience_years, license_number)
-VALUES ('DOC-12345', 'Lê Văn Quân', 'Đa Khoa', 8, 9876543);
+-- working_time: 1 = Morning (08:00-12:00), 2 = Afternoon (13:00-17:00)
+INSERT INTO Doctor (doctor_id, name, specialty, experience_years, license_number, working_time)
+VALUES ('DOC-12345', 'Lê Văn Quân', 'Đa Khoa', 8, 9876543, 1);
 
 -- Insert Appointments (today = 2026-07-13, all Pending/In Progress for the worklist demo)
 INSERT INTO Appointment (appointment_id, patient_id, doctor_id, appointment_date, start_time, status)
@@ -220,21 +207,4 @@ VALUES
 ('MED-003', 'Ibuprofen 400mg', 'Ibuprofen', 'Tablet', '400 mg', 'Domesco', 'Kháng viêm giảm đau'),
 ('MED-004', 'Omeprazole 20mg', 'Omeprazole', 'Capsule', '20 mg', 'Imexpharm', 'Giảm axit dạ dày');
 
--- ==========================================
--- Seed Data for Doctor Schedules
--- ==========================================
-INSERT INTO DoctorSchedule (doctor_id, work_date, start_time, end_time, is_available)
-VALUES
-('DOC-12345', '2026-07-13', '08:00:00', '09:00:00', TRUE),
-('DOC-12345', '2026-07-13', '09:00:00', '10:00:00', TRUE),
-('DOC-12345', '2026-07-13', '10:00:00', '11:00:00', TRUE),
-('DOC-12345', '2026-07-13', '14:00:00', '15:00:00', TRUE),
-('DOC-12345', '2026-07-13', '15:00:00', '16:00:00', TRUE),
-('DOC-12345', '2026-07-13', '16:00:00', '17:00:00', TRUE),
 
-('DOC-12345', '2026-07-14', '08:00:00', '09:00:00', TRUE),
-('DOC-12345', '2026-07-14', '09:00:00', '10:00:00', TRUE),
-('DOC-12345', '2026-07-14', '10:00:00', '11:00:00', TRUE),
-('DOC-12345', '2026-07-14', '14:00:00', '15:00:00', TRUE),
-('DOC-12345', '2026-07-14', '15:00:00', '16:00:00', TRUE),
-('DOC-12345', '2026-07-14', '16:00:00', '17:00:00', TRUE);
