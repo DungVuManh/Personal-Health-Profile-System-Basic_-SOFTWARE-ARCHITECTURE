@@ -9,11 +9,13 @@ const healthRecordRoutes = require('./routes/healthRecordRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 
 const app = express();
+const userRoutes = require('./routes/userRoutes');
 const PORT = process.env.PORT || 9999;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/api/users', userRoutes);
 
 // Routes
 app.use('/api/appointments', appointmentRoutes);

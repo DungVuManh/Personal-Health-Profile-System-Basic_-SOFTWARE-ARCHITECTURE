@@ -2,6 +2,7 @@ import { useState } from 'react'
 // import heroImg from './assets/hero.png'
 import ConsultationScreen from './pages/ConsultationScreen'
 import BookingScreen from './pages/BookingScreen'
+import UserManagementScreen from './pages/UserManagementScreen'
 import {
   Activity,
   Home,
@@ -60,6 +61,17 @@ function App() {
               <Stethoscope className="w-4 h-4" />
               <span>Clinical Consultation (UC14)</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab('userman')}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${activeTab === 'userman'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+            >
+              <Stethoscope className="w-4 h-4" />
+              <span>Admin User Management (UC7)</span>
+            </button>
           </nav>
         </div>
       </header>
@@ -70,7 +82,9 @@ function App() {
           <ConsultationScreen />
         ) : activeTab === 'booking' ? (
           <BookingScreen />
-        ) : (
+        ) : activeTab === 'userman' ? (
+                    <UserManagementScreen />
+        ) :(
           <div className="max-w-4xl mx-auto px-4 py-16 flex-grow flex flex-col justify-center items-center text-center">
             {/* Hero Section with professional medical icons */}
             <div className="mb-10 relative">

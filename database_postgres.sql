@@ -208,3 +208,27 @@ VALUES
 ('MED-004', 'Omeprazole 20mg', 'Omeprazole', 'Capsule', '20 mg', 'Imexpharm', 'Giảm axit dạ dày');
 
 
+
+    -- Permission Table: Defines access levels for management [Source 8]
+    CREATE TABLE IF NOT EXISTS Permission (
+        permission_id SERIAL PRIMARY KEY,
+        permission_name VARCHAR(50) NOT NULL,
+        description TEXT
+    );
+
+    -- Initial Permission Data [Source 8]
+    INSERT INTO Permission (permission_id, permission_name, description) VALUES
+    (1, 'Admin', 'Manages the system, have system CRUD Access, see overall log reports'),
+    (2, 'Doctor', 'Medical professionals responsible for patient care'),
+    (3, 'Patient', 'End-users receiving medical treatment')
+    ON CONFLICT (permission_id) DO NOTHING;
+
+    -- UserInfo Table: Separated from login table for management details [Source 7, 8]
+    CREATE TABLE IF NOT EXISTS UserInfo (
+        user_id VARCHAR(50) PRIMARY KEY REFERENCES Users(user_id), -- Links to your existing login table
+        email VARCHAR(100),
+        phone VARCHAR(20),
+        address TEXT,
+        permission_id INT REFERENCES Permission(permission_id),
+        management_status VARCHAR(20) DEFAULT 'Active' -- Active, Locked, Deactivated [Source 7]
+    );
